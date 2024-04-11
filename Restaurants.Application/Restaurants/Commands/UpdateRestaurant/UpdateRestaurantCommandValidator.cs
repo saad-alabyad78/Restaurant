@@ -1,0 +1,13 @@
+using FluentValidation;
+
+namespace Restaurants.Application.Restaurants.Commands.UpdateRestaurant
+{
+    public class UpdateRestaurantCommandValidator : AbstractValidator<UpdateRestaurantCommand>
+    {
+        public UpdateRestaurantCommandValidator()
+        {
+            RuleFor(dto => dto.Name)
+            .Length( 5 , 10).WithMessage("haha too small or too big") ;
+        }
+    }
+}
