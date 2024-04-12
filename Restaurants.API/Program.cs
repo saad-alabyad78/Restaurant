@@ -4,6 +4,7 @@ using Restaurants.Infrastructure.Seeders;
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Compact;
+using Restaurants.API.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,12 +16,12 @@ builder.Host.UseSerilog((context , configuration) =>
     configuration.ReadFrom.Configuration(context.Configuration)
 );
 
-new CompactJsonFormatter();
-
 builder.Services.AddControllers();
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+
+builder.Services.AddScoped<ErrorHandlingMiddleware>();
 
 var app = builder.Build();
 
@@ -34,6 +35,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 app.MapControllers();

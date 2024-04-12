@@ -29,9 +29,7 @@ namespace Restaurants.API.Controllers
         public async Task<ActionResult<RestaurantDto?>> GetById([FromRoute] int id)
         {
             var restaurant = await mediator.Send(new GetRestaurantByIdQuery(id)) ;
-            if(restaurant == null){
-                return BadRequest("not found") ;
-            }
+            
             return Ok(restaurant) ;
         }
 
@@ -40,36 +38,28 @@ namespace Restaurants.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> Create([FromBody]CreateRestaurantCommand command)
         {
-            if(!ModelState.IsValid)
-            {
-                return BadRequest(ModelState) ;
-            }
             int id = await mediator.Send(command);
             return CreatedAtAction(nameof(GetById) , new {id} , null) ;
         }
         [HttpDelete("{id:int}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete([FromRoute]int id)
         {
-            bool isDeleted = await mediator.Send(new DeleteRestaurantCommand(id));
-            if(isDeleted)
-            {
-                return NoContent();
-            }
-            return NotFound();
+            await mediator.Send(new DeleteRestaurantCommand(id));
+            
+            return NoContent();
         }
         [HttpPatch("{id:int}")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> Update([FromRoute]int id , [FromBody]UpdateRestaurantCommand command)
         {
             command.Id = id ;
-            bool isUpdated = await mediator.Send(command);
+            await mediator.Send(command);
 
-            if(isUpdated is false){
-                return NotFound();
-            }
             return CreatedAtAction(nameof(GetById) , new{id} , null);
         }
 

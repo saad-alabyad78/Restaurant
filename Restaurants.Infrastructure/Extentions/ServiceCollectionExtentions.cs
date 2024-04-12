@@ -20,9 +20,12 @@ namespace Restaurants.Infrastructure.Extentions
 
             );
 
+            //seeder
             services.AddScoped<IRestaurantsSeeder , RestaurantSeeder>();
-            services.AddScoped<IRestaurantsRepository , RestaurantsRepository>();
+
+            //repositories
+            services.AddScoped<IRestaurantsRepository , RestaurantsRepository>() ;
+            services.AddScoped<IDishRepository , DishRepository>() ;
         }
     }
-
 }
