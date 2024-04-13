@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Restaurants.Application.Restaurants;
@@ -20,6 +21,7 @@ namespace Restaurants.API.Controllers
     public class RestaurantController(IMediator mediator) : ControllerBase
     {
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<RestaurantDto>>> GetAll()
         {
             var restaurants = await mediator.Send(new GetAllRestaurantsQuery());

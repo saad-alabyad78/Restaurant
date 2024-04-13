@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Restaurants.Domain.Entities;
 using Restaurants.Domain.Repositories;
 using Restaurants.Infrastructure.Persistence;
 using Restaurants.Infrastructure.Repositories;
@@ -20,12 +21,19 @@ namespace Restaurants.Infrastructure.Extentions
 
             );
 
+            //identity
+            services.AddIdentityApiEndpoints<User>()
+                .AddEntityFrameworkStores<RestaurantDbContext>();
+
             //seeder
             services.AddScoped<IRestaurantsSeeder , RestaurantSeeder>();
 
             //repositories
             services.AddScoped<IRestaurantsRepository , RestaurantsRepository>() ;
             services.AddScoped<IDishRepository , DishRepository>() ;
+
+            
+                
         }
     }
 }
