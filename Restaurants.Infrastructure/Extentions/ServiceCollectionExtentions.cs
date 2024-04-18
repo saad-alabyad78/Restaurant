@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Restaurants.Domain.Entities;
 using Restaurants.Domain.Repositories;
+using Restaurants.Infrastructure.Authorization;
 using Restaurants.Infrastructure.Persistence;
 using Restaurants.Infrastructure.Repositories;
 using Restaurants.Infrastructure.Seeders;
@@ -23,7 +25,9 @@ namespace Restaurants.Infrastructure.Extentions
 
             //identity
             services.AddIdentityApiEndpoints<User>()
-                .AddEntityFrameworkStores<RestaurantDbContext>();
+                    .AddRoles<IdentityRole>()
+                    .AddClaimsPrincipalFactory<RestaurantUserClaimsPrincipalFactory>()
+                    .AddEntityFrameworkStores<RestaurantDbContext>();
 
             //seeder
             services.AddScoped<IRestaurantsSeeder , RestaurantSeeder>();
@@ -32,8 +36,9 @@ namespace Restaurants.Infrastructure.Extentions
             services.AddScoped<IRestaurantsRepository , RestaurantsRepository>() ;
             services.AddScoped<IDishRepository , DishRepository>() ;
 
-            
-                
+            //policy
+            services.AddAuthorizationBuilder()
+                .AddPolicy(PolicyNames.HasNationality , builder => builder.RequireClaim(AppCliamTypes.Nationality));    
         }
     }
 }
